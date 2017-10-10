@@ -6,9 +6,9 @@ function wait(milliseconds: number) {
 	});
 }
 
-async function writeText(container: HTMLElement, text: string[], overwrite: boolean = true, lineWaitTime: number = 1000): Promise<{ close: () => void }> {
-	const closeFunction = () => container.classList.add("hide-cursor");
-	
+async function writeText(container: HTMLElement, text: string[], overwrite: boolean = true, lineWaitTime: number = 1000): Promise<{ finish: () => void }> {
+	const finishFunction = () => container.classList.add("hide-cursor");
+
 	container.classList.remove("hide-cursor");
 	await wait(500);
 	container.classList.remove("idle");
@@ -42,11 +42,13 @@ async function writeText(container: HTMLElement, text: string[], overwrite: bool
 	container.classList.add("idle");
 	await wait(500);
 
-	return { close: closeFunction };
+	return { finish: finishFunction };
 }
 
 window.onload = async () => {
-	startWebSocketListener();
+	startWebSocketListener().catch(err => {
+		throw err;
+	});
 };
 
 // Listen for updates
@@ -58,11 +60,11 @@ async function startWebSocketListener() {
 
 	(await writeText(systemActive, [
 		"// HackGT v4 system initialized"
-	])).close();
+	])).finish();
 	(await writeText(eventInfo, [
 		"// Check out live.hack.gt for event info",
 		"// Loading opening ceremony..."
-	], false)).close();
+	], false)).finish();
 
 	let socket = io();
 	socket.on("connect", () => {
@@ -75,16 +77,16 @@ async function startWebSocketListener() {
 			currentUserCount = data.count;
 			(await writeText(count, [
 				`${data.count.toLocaleString()} users loaded`
-			])).close();
+			])).finish();
 		}
 	});
 
-	socket.on("users-update", async (data: { new: boolean, users: string[]; }) => {
+	socket.on("users-update", async (data: { new: boolean; users: string[] }) => {
 		if (!data.new && data.users.length > 0) {
 			// Otherwise will present wayyyy to many users on page load if many people are checked in already
 			data.users = [data.users.pop()!];
 		}
-		
+
 		for (let user of data.users as string[]) {
 			if (user.trim().length === 0) {
 				continue;
@@ -94,7 +96,7 @@ async function startWebSocketListener() {
 			]);
 		}
 	});
-	
+
 	socket.on("disconnect", () => {
 		console.warn("Socket closed unexpectedly");
 	});
