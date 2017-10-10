@@ -1,8 +1,8 @@
 import * as http from "http";
 import * as path from "path";
 import * as fs from "fs";
-import * as WebSocket from "ws";
 import * as Influx from "influx";
+import * as socketIo from "socket.io";
 
 import * as express from "express";
 import * as serveStatic from "serve-static";
@@ -10,7 +10,7 @@ import * as compression from "compression";
 
 export let app = express();
 app.use(compression());
-
+let server = http.createServer(app);
 const PORT = process.env.PORT ? parseInt(process.env.PORT!, 10) : 3000;
 const STATIC_ROOT = "./client";
 
@@ -48,19 +48,16 @@ const influx = new Influx.InfluxDB({
 	]
 });
 
-const server = http.createServer(app);
-export const wss = new WebSocket.Server({ server });
+let io = socketIo(server);
 const usersAlreadySeen: string[] = [];
-
-wss.on("connection", connection => {
-	connection.send(JSON.stringify({
-		"type": "count",
-		"count": 0
-	}));
-	connection.send(JSON.stringify({
-		"type": "users",
+let currentCount = 0;
+io.on("connection", connection => {
+	connection.emit('count-update',{
+		"count": currentCount
+	});
+	connection.emit('user-update', {
 		"count": usersAlreadySeen
-	}));
+	});
 });
 
 function getInfluxData() {
@@ -73,17 +70,14 @@ function getInfluxData() {
 				newUsers.push(user.name);
 			}
 		}
-		console.log(newUsers);
-		for (let socket of wss.clients) {
-			socket.send(JSON.stringify({
-				"type": "count",
-				"count": count
-			}));
-			socket.send(JSON.stringify({
-				"type": "users",
-				"users": newUsers
-			}));
-		}
+		currentCount = count;
+
+		io.emit('count-update', {
+			"count": count
+		});
+		io.emit('user-update', {
+			"users": newUsers
+		});
 	}).catch((err) => {
 		console.error(err);
 	});

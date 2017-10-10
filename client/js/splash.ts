@@ -1,5 +1,5 @@
 declare const moment: any;
-
+declare const io: any;
 function wait(milliseconds: number) {
 	return new Promise((resolve, reject) => {
 		setTimeout(resolve, milliseconds);
@@ -46,20 +46,18 @@ window.onload = async () => {
 };
 
 // Listen for updates
-const wsProtocol = location.protocol === "http:" ? "ws" : "wss";
 function startWebSocketListener() {
-	const socket = new WebSocket(`${wsProtocol}://${window.location.host}`);
-	socket.addEventListener("message", event => {
-		console.log(event.data);
+	let socket = io();
+	socket.on('connect', () => {
+		console.log('Connected to websockets');
 	});
-	socket.addEventListener("error", async event => {
-		console.warn("Socket encountered an error, restarting...:", event);
-		await wait(1000);
-		startWebSocketListener();
+	socket.on('count-update', (data: any) => {
+		console.log(data);
 	});
-	socket.addEventListener("close", async event => {
-		console.warn("Socket closed unexpectedly");
-		await wait(1000);
-		startWebSocketListener();
+	socket.on('users-update', (data: any) => {
+		console.log(data);
+	});
+	socket.on('disconnect', () => {
+		console.log('Disconnected from websockets :(');
 	});
 }
