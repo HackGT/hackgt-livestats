@@ -66,7 +66,7 @@ async function startWebSocketListener() {
 		"// HackGT system initialized"
 	])).close();
 	(await writeText(eventInfo, [
-		"// print(\"Check out live.hack.gt for event information\")",
+		"// Check out live.hack.gt for event info",
 		"// Loading opening ceremony..."
 	], false)).close();
 

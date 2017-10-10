@@ -110,7 +110,7 @@ code.console.hide-cursor::after {
 }
 
 #event-info {
-    width: 100%;
+    width: 70%;
 }
 #count {
     margin-top: 20px;
