@@ -57,3 +57,8 @@ typings/
 # dotenv environment variables file
 .env
 
+
+\.vscode/
+client/js/*.js
+*.js.map
+server/**/*.js
