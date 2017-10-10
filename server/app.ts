@@ -1,5 +1,7 @@
+import * as http from "http";
 import * as path from "path";
 import * as fs from "fs";
+import * as WebSocket from "ws";
 
 import * as express from "express";
 import * as serveStatic from "serve-static";
@@ -24,6 +26,16 @@ app.use("/js", serveStatic(path.resolve(STATIC_ROOT, "js")));
 app.use("/css", serveStatic(path.resolve(STATIC_ROOT, "css")));
 app.use("/assets", serveStatic(path.resolve(STATIC_ROOT, "assets")));
 
-app.listen(PORT, () => {
+
+const server = http.createServer(app);
+export const wss = new WebSocket.Server({ server });
+wss.on("connection", connection => {
+	connection.send(JSON.stringify({
+		"type": "count",
+		"count": 0
+	}));
+});
+
+server.listen(PORT, () => {
 	console.log(`Registration system started on port ${PORT}`);
 });

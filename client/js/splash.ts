@@ -33,6 +33,7 @@ async function writeText(container: HTMLElement, text: string[], lineWaitTime: n
 }
 
 window.onload = async () => {
+	startWebSocketListener();
 	const systemActive = document.getElementById("system-active")!;
 	const status = document.getElementById("status")!;
 
@@ -43,3 +44,22 @@ window.onload = async () => {
 		"Stuff!"
 	]);
 };
+
+// Listen for updates
+const wsProtocol = location.protocol === "http:" ? "ws" : "wss";
+function startWebSocketListener() {
+	const socket = new WebSocket(`${wsProtocol}://${window.location.host}`);
+	socket.addEventListener("message", event => {
+		console.log(event.data);
+	});
+	socket.addEventListener("error", async event => {
+		console.warn("Socket encountered an error, restarting...:", event);
+		await wait(1000);
+		startWebSocketListener();
+	});
+	socket.addEventListener("close", async event => {
+		console.warn("Socket closed unexpectedly");
+		await wait(1000);
+		startWebSocketListener();
+	});
+}
