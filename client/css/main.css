@@ -108,9 +108,15 @@ code.console.hide-cursor::after {
     display: none;
 }
 
+#event-info {
+    width: 100%;
+}
+#count {
+    margin-top: 20px;
+}
 #system-active {
     position: absolute;
-    top: 10px;
+    bottom: 10px;
 }
 
 #status {

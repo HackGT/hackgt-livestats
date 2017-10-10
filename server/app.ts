@@ -28,21 +28,21 @@ app.use("/css", serveStatic(path.resolve(STATIC_ROOT, "css")));
 app.use("/assets", serveStatic(path.resolve(STATIC_ROOT, "assets")));
 
 const influx = new Influx.InfluxDB({
-	host: process.env.INFLUX_URL || 'localhost',
-	database: 'metrics',
+	host: process.env.INFLUX_URL || "localhost",
+	database: "metrics",
 	schema: [
 		{
-			measurement: 'https://checkin.hack.gt',
+			measurement: "https://checkin.hack.gt",
 			fields: {
 				value: Influx.FieldType.INTEGER
 			},
 			tags: [
-				'check_in',
-				'checked_in_by',
-				'checkinTag',
-				'email',
-				'id',
-				'name'
+				"check_in",
+				"checked_in_by",
+				"checkinTag",
+				"email",
+				"id",
+				"name"
 			]
 		}
 	]
@@ -52,16 +52,17 @@ let io = socketIo(server);
 const usersAlreadySeen: string[] = [];
 let currentCount = 0;
 io.on("connection", connection => {
-	connection.emit('count-update',{
+	connection.emit("count-update",{
 		"count": currentCount
 	});
-	connection.emit('users-update', {
+	connection.emit("users-update", {
 		"users": usersAlreadySeen
 	});
 });
 
-function getInfluxData() {
-	influx.query('SELECT count("value") FROM "https://checkin.hack.gt" GROUP BY "name";').then((data: any) => {
+async function getInfluxData() {
+	try {
+		let data = await influx.query<{ name: string }>('SELECT count("value") FROM "https://checkin.hack.gt" GROUP BY "name";');
 		let count = data.length;
 		let newUsers = [];
 		for (let user of data) {
@@ -72,17 +73,18 @@ function getInfluxData() {
 		}
 		currentCount = count;
 
-		io.emit('count-update', {
+		io.emit("count-update", {
 			"count": count
 		});
-		io.emit('users-update', {
+		io.emit("users-update", {
 			"users": newUsers
 		});
-	}).catch((err) => {
+	}
+	catch (err) {
 		console.error(err);
-	});
+	}
 }
 setInterval(getInfluxData, 5000);
 server.listen(PORT, () => {
-	console.log(`Registration system started on port ${PORT}`);
+	console.log(`Live stats system started on port ${PORT}`);
 });
