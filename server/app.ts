@@ -55,7 +55,7 @@ io.on("connection", connection => {
 	connection.emit('count-update',{
 		"count": currentCount
 	});
-	connection.emit('user-update', {
+	connection.emit('users-update', {
 		"count": usersAlreadySeen
 	});
 });
@@ -75,7 +75,7 @@ function getInfluxData() {
 		io.emit('count-update', {
 			"count": count
 		});
-		io.emit('user-update', {
+		io.emit('users-update', {
 			"users": newUsers
 		});
 	}).catch((err) => {
