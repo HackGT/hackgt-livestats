@@ -106,22 +106,20 @@ code.console.idle::after {
     animation: 1s blink infinite;
 }
 code.console.hide-cursor::after {
-    display: none;
+    /* display: none; */
+    opacity: 0 !important;
 }
 
 #event-info {
     width: 70%;
 }
-#count {
-    margin-top: 20px;
-}
 #system-active {
     position: absolute;
     bottom: 20px;
 }
-
-#status {
-	margin-top: 70px;
+#status, #count {
+    margin-top: 40px;
+    font-size: 3.5em;
 }
 #event-info {
 	top:30px;

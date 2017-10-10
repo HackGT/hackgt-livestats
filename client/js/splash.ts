@@ -6,14 +6,9 @@ function wait(milliseconds: number) {
 	});
 }
 
-let writeTextRunning: boolean = false;
 async function writeText(container: HTMLElement, text: string[], overwrite: boolean = true, lineWaitTime: number = 1000): Promise<{ close: () => void }> {
 	const closeFunction = () => container.classList.add("hide-cursor");
-
-	if (writeTextRunning) {
-		return { close: closeFunction };
-	}
-	writeTextRunning = true;
+	
 	container.classList.remove("hide-cursor");
 	await wait(500);
 	container.classList.remove("idle");
@@ -46,7 +41,6 @@ async function writeText(container: HTMLElement, text: string[], overwrite: bool
 	}
 	container.classList.add("idle");
 	await wait(500);
-	writeTextRunning = false;
 
 	return { close: closeFunction };
 }
@@ -63,7 +57,7 @@ async function startWebSocketListener() {
 	const count = document.getElementById("count")!;
 
 	(await writeText(systemActive, [
-		"// HackGT system initialized"
+		"// HackGT v4 system initialized"
 	])).close();
 	(await writeText(eventInfo, [
 		"// Check out live.hack.gt for event info",
@@ -79,14 +73,17 @@ async function startWebSocketListener() {
 	socket.on("count-update", async (data: any) => {
 		if (data.count !== currentUserCount) {
 			currentUserCount = data.count;
-			await writeText(count, [
-				`${data.count} users loaded`
-			]);
+			(await writeText(count, [
+				`${data.count.toLocaleString()} users loaded`
+			])).close();
 		}
 	});
 
-	socket.on("users-update", async (data: any) => {
-		console.log(data);
+	socket.on("users-update", async (data: { new: boolean, users: string[]; }) => {
+		if (!data.new && data.users.length > 0) {
+			// Otherwise will present wayyyy to many users on page load if many people are checked in already
+			data.users = [data.users.pop()!];
+		}
 		
 		for (let user of data.users as string[]) {
 			if (user.trim().length === 0) {

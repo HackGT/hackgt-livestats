@@ -56,6 +56,7 @@ io.on("connection", connection => {
 		"count": currentCount
 	});
 	connection.emit("users-update", {
+		"new": false,
 		"users": usersAlreadySeen
 	});
 });
@@ -77,6 +78,7 @@ async function getInfluxData() {
 			"count": count
 		});
 		io.emit("users-update", {
+			"new": true,
 			"users": newUsers
 		});
 	}
