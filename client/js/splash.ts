@@ -72,22 +72,35 @@ async function startWebSocketListener() {
 	});
 
 	let currentUserCount: number = -1;
+	let countUpdating = false;
 	socket.on("count-update", async (data: any) => {
-		if (data.count !== currentUserCount) {
+		console.info("count-update", data);
+		if (data.count !== currentUserCount && !countUpdating) {
+			countUpdating = true;
 			currentUserCount = data.count;
 			(await writeText(count, [
 				`${data.count.toLocaleString()} users loaded`
 			])).finish();
+			countUpdating = false;
 		}
 	});
 
+	let pendingUsers: string[] = [];
+	let usersUpdating = false;
 	socket.on("users-update", async (data: { new: boolean; users: string[] }) => {
+		console.info("users-update", data);
 		if (!data.new && data.users.length > 0) {
 			// Otherwise will present wayyyy to many users on page load if many people are checked in already
 			data.users = [data.users.pop()!];
 		}
 
-		for (let user of data.users as string[]) {
+		if (usersUpdating) {
+			pendingUsers.push(...data.users);
+			return;
+		}
+
+		usersUpdating = true;
+		for (let user of pendingUsers.concat(data.users)) {
 			if (user.trim().length === 0) {
 				continue;
 			}
@@ -95,6 +108,8 @@ async function startWebSocketListener() {
 				`Welcome ${user}!`
 			]);
 		}
+		usersUpdating = false;
+		pendingUsers = [];
 	});
 
 	socket.on("disconnect", () => {
