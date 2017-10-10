@@ -106,8 +106,8 @@ code.console.idle::after {
     animation: 1s blink infinite;
 }
 code.console.hide-cursor::after {
-    /* display: none; */
     opacity: 0 !important;
+    animation: none;
 }
 
 #event-info {
