@@ -44,11 +44,18 @@ header {
 header > h1 {
     margin: 0;
     margin-left: 20px;
-    font-size: 4em;
+    font-size: 6vw;
+    align-self: center;
+}
+@media screen and (min-width: 2000px){
+    header > h1 {
+        font-size: 120px;
+    }
 }
 #logo {
 	height: 100%;
-    width: 100px;
+    width: 110px;
+    z-index: 2;
 }
 
 header, main {
@@ -68,6 +75,7 @@ code.console {
     padding: 0;
     line-height: 1.5em;
     user-select: none;
+    z-index: 1;
 }
 .cover > code.console {
     font-size: 3.5em;
@@ -96,13 +104,15 @@ code.console.hide-cursor::after {
 }
 
 img.alley {
-	height: 100vh;
+    height: 100vh;
+    position: absolute;
+    z-index: 0;
 }
 img.alley.left {
-	float: left;
+	left: 0;
 }
 img.alley.right {
-	float: right;
+	right: 0;
 }
 
 input[type="text"], input[type="email"] {
