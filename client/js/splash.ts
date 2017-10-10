@@ -79,7 +79,7 @@ async function startWebSocketListener() {
 			countUpdating = true;
 			currentUserCount = data.count;
 			(await writeText(count, [
-				`${data.count.toLocaleString()} users loaded`
+				`${data.count.toLocaleString()} user${data.count !== 1 ? "s" : ""} loaded`
 			])).finish();
 			countUpdating = false;
 		}
