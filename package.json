@@ -1,0 +1,32 @@
+{
+  "name": "hackgt-livestats",
+  "version": "1.0.0",
+  "description": "Live stats website for HackGT4 ",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "bash ./build.sh",
+    "quickbuild": "./node_modules/typescript/bin/tsc -p server/ && ./node_modules/typescript/bin/tsc -p client/",
+    "start": "node server/app.js",
+    "build-start": "npm run build && npm start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/petschekr/hackgt-livestats.git"
+  },
+  "author": {
+    "name": "Ryan Petschek",
+    "email": "petschekr@gmail.com",
+    "url": "https://github.com/petschekr"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/petschekr/hackgt-livestats/issues"
+  },
+  "homepage": "https://github.com/petschekr/hackgt-livestats#readme",
+  "devDependencies": {
+    "tslint": "^5.7.0",
+    "tslint-language-service": "^0.9.6",
+    "typescript": "^2.5.3"
+  }
+}
