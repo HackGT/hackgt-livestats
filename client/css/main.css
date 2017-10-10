@@ -110,9 +110,15 @@ code.console.hide-cursor::after {
 
 #system-active {
     position: absolute;
-    bottom: 10px;
+    top: 10px;
 }
 
+#status {
+	margin-top: 70px;
+}
+#event-info {
+	top:30px;
+}
 img.alley {
     height: 100vh;
     position: absolute;

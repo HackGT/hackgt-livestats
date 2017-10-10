@@ -34,15 +34,6 @@ async function writeText(container: HTMLElement, text: string[], lineWaitTime: n
 
 window.onload = async () => {
 	startWebSocketListener();
-	const systemActive = document.getElementById("system-active")!;
-	const status = document.getElementById("status")!;
-
-	await writeText(systemActive, [
-		"// HackGT system active"
-	]);
-	await writeText(status, [
-		"Stuff!"
-	]);
 };
 
 // Listen for updates
@@ -51,11 +42,18 @@ function startWebSocketListener() {
 	socket.on('connect', () => {
 		console.log('Connected to websockets');
 	});
-	socket.on('count-update', (data: any) => {
-		console.log(data);
+	socket.on('count-update', async (data: any) => {
+		const systemActive = document.getElementById("system-active")!;
+		systemActive.textContent = `// HackGT system init... ${data.count} users loaded`;
 	});
-	socket.on('users-update', (data: any) => {
+	socket.on('users-update', async (data: any) => {
 		console.log(data);
+		for (let user of data.users) {
+			const status = document.getElementById("status")!;
+			await writeText(status, [
+				`Welcome ${user}`
+			]);
+		}
 	});
 	socket.on('disconnect', () => {
 		console.log('Disconnected from websockets :(');

@@ -56,7 +56,7 @@ io.on("connection", connection => {
 		"count": currentCount
 	});
 	connection.emit('users-update', {
-		"count": usersAlreadySeen
+		"users": usersAlreadySeen
 	});
 });
 
