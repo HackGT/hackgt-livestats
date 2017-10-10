@@ -28,7 +28,7 @@ app.use("/css", serveStatic(path.resolve(STATIC_ROOT, "css")));
 app.use("/assets", serveStatic(path.resolve(STATIC_ROOT, "assets")));
 
 const influx = new Influx.InfluxDB({
-	host: process.env.INFLUX_URL || "localhost",
+	host: process.env.INFLUX_HOST || "localhost",
 	database: "metrics",
 	schema: [
 		{

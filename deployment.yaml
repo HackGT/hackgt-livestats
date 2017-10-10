@@ -2,3 +2,5 @@ git:
     remote: https://github.com/HackGT/hackgt-livestats.git
     branch: master
 
+env:
+    INFLUX_HOST: influxdb-influxdb.monitoring.svc.cluster.local
