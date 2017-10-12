@@ -135,6 +135,11 @@ img.alley.left {
 img.alley.right {
 	right: 0;
 }
+@media screen and (max-width: 900px){
+    img.alley {
+        display: none;
+    }
+}
 
 input[type="text"], input[type="email"] {
     font-family: "KennyFuture", monospace;
